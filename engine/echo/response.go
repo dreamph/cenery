@@ -2,7 +2,7 @@ package echo
 
 import (
 	"bytes"
-	"cenery"
+	"github.com/dreamph/cenery"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"io"

@@ -1,7 +1,7 @@
 package echo
 
 import (
-	"cenery"
+	"github.com/dreamph/cenery"
 	"github.com/labstack/echo/v4"
 )
 

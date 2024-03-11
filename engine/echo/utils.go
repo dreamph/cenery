@@ -1,8 +1,8 @@
 package echo
 
 import (
-	"cenery"
 	"errors"
+	"github.com/dreamph/cenery"
 	"github.com/labstack/echo/v4"
 	"io"
 	"mime/multipart"

@@ -1,8 +1,8 @@
 package fiber
 
 import (
-	"cenery"
 	"errors"
+	"github.com/dreamph/cenery"
 	"github.com/gofiber/fiber/v2"
 	"io"
 	"mime/multipart"

@@ -1,4 +1,4 @@
-module cenery
+module github.com/dreamph/cenery
 
 go 1.22
 

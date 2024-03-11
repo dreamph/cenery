@@ -1,9 +1,9 @@
 package main
 
 import (
-	"cenery"
-	echoengine "cenery/engine/echo"
-	fiberengine "cenery/engine/fiber"
+	"github.com/dreamph/cenery"
+	echoengine "github.com/dreamph/cenery/engine/echo"
+	fiberengine "github.com/dreamph/cenery/engine/fiber"
 	gojson "github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	fiberrecover "github.com/gofiber/fiber/v2/middleware/recover"

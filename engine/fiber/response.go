@@ -1,7 +1,7 @@
 package fiber
 
 import (
-	"cenery"
+	"github.com/dreamph/cenery"
 	"github.com/valyala/fasthttp"
 )
 

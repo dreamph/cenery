@@ -2,7 +2,7 @@ package echo
 
 import (
 	"bytes"
-	"cenery"
+	"github.com/dreamph/cenery"
 	"io"
 	"net/http"
 )
