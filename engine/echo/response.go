@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"github.com/dreamph/cenery"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 	"io"
 )
 
@@ -13,11 +12,6 @@ type response struct {
 }
 
 func NewResponse(req *echo.Response) cenery.Response {
-
-	e := echo.New()
-	e.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
-	}))
-
 	return &response{resp: req}
 }
 
@@ -32,11 +26,7 @@ func (h *response) SetBody(data []byte) {
 	_, _ = h.resp.Write(data)
 }
 
-func (h *response) GetHeaderBytes(key string) []byte {
-	return []byte(h.resp.Header().Get(key))
-}
-
-func (h *response) GetHeaderString(key string) string {
+func (h *response) GetHeader(key string) string {
 	return h.resp.Header().Get(key)
 }
 

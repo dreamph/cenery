@@ -27,12 +27,8 @@ func (h *request) SetBody(data []byte) {
 	h.req.Body = io.NopCloser(bytes.NewReader(data))
 }
 
-func (h *request) GetHeaderBytes(key string) []byte {
-	return []byte(h.req.Header.Get(key))
-}
-
-func (h *request) GetHeaderString(key string) string {
-	return string(h.GetHeaderBytes(key))
+func (h *request) GetHeader(key string) string {
+	return h.req.Header.Get(key)
 }
 
 func (h *request) SetHeader(key string, val string) {

@@ -26,8 +26,7 @@ type Request interface {
 	Body() []byte
 	SetBody(data []byte)
 
-	GetHeaderBytes(key string) []byte
-	GetHeaderString(key string) string
+	GetHeader(key string) string
 	SetHeader(key string, val string)
 	AddHeader(key string, val string)
 }
@@ -36,8 +35,7 @@ type Response interface {
 	Body() []byte
 	SetBody(data []byte)
 
-	GetHeaderBytes(key string) []byte
-	GetHeaderString(key string) string
+	GetHeader(key string) string
 	SetHeader(key string, val string)
 	AddHeader(key string, val string)
 }

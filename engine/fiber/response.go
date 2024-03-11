@@ -21,12 +21,8 @@ func (h *response) SetBody(data []byte) {
 	h.resp.SetBody(data)
 }
 
-func (h *response) GetHeaderBytes(key string) []byte {
-	return h.resp.Header.Peek(key)
-}
-
-func (h *response) GetHeaderString(key string) string {
-	return string(h.GetHeaderBytes(key))
+func (h *response) GetHeader(key string) string {
+	return string(h.resp.Header.Peek(key))
 }
 
 func (h *response) SetHeader(key string, val string) {
