@@ -2,10 +2,11 @@ package fiber
 
 import (
 	"errors"
-	"github.com/dreamph/cenery"
-	"github.com/gofiber/fiber/v2"
 	"io"
 	"mime/multipart"
+
+	"github.com/dreamph/cenery"
+	"github.com/gofiber/fiber/v2"
 )
 
 func FormFile(c *fiber.Ctx, fileKey string) *cenery.FileData {

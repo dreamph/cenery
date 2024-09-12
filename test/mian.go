@@ -1,6 +1,8 @@
 package main
 
 import (
+	"log"
+
 	"github.com/dreamph/cenery"
 	echoengine "github.com/dreamph/cenery/engine/echo"
 	fiberengine "github.com/dreamph/cenery/engine/fiber"
@@ -9,7 +11,6 @@ import (
 	fiberrecover "github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
-	"log"
 )
 
 type ErrorResponse struct {
@@ -50,7 +51,8 @@ func NewFiber() cenery.App {
 }
 
 func main() {
-	app := NewFiber() //NewEcho()
+	//app := NewFiber()
+	app := NewEcho()
 
 	app.Get("/", func(c cenery.Ctx) error {
 		return c.SendString(200, "hello")

@@ -2,9 +2,10 @@ package echo
 
 import (
 	"bytes"
-	"github.com/dreamph/cenery"
 	"io"
 	"net/http"
+
+	"github.com/dreamph/cenery"
 )
 
 type request struct {

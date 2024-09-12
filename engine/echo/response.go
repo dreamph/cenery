@@ -2,9 +2,10 @@ package echo
 
 import (
 	"bytes"
+	"io"
+
 	"github.com/dreamph/cenery"
 	"github.com/labstack/echo/v4"
-	"io"
 )
 
 type response struct {

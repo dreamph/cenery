@@ -2,10 +2,11 @@ package echo
 
 import (
 	"errors"
-	"github.com/dreamph/cenery"
-	"github.com/labstack/echo/v4"
 	"io"
 	"mime/multipart"
+
+	"github.com/dreamph/cenery"
+	"github.com/labstack/echo/v4"
 )
 
 func FormFile(c echo.Context, fileKey string) *cenery.FileData {
