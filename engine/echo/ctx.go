@@ -1,16 +1,30 @@
 package echo
 
 import (
+	"bytes"
 	"github.com/dreamph/cenery"
 	"github.com/labstack/echo/v4"
+	"io"
 )
 
 type serverCtx struct {
-	ctx echo.Context
+	ctx  echo.Context
+	next echo.HandlerFunc
+	resp cenery.Response
 }
 
-func NewServerCtx(ctx echo.Context) cenery.Ctx {
-	return &serverCtx{ctx: ctx}
+func NewServerCtx(ctx echo.Context, next echo.HandlerFunc) cenery.Ctx {
+	resBody := &bytes.Buffer{}
+	ctx.Response().Writer = &responseBodyWriter{
+		Writer:         io.MultiWriter(ctx.Response().Writer, resBody),
+		ResponseWriter: ctx.Response().Writer,
+	}
+
+	return &serverCtx{
+		ctx:  ctx,
+		next: next,
+		resp: NewResponse(ctx.Response()),
+	}
 }
 
 func (s *serverCtx) Params(key string, defaultValue ...string) string {
@@ -58,9 +72,18 @@ func (s *serverCtx) SendJSON(status int, data interface{}) error {
 }
 
 func (s *serverCtx) Request() cenery.Request {
+
 	return NewRequest(s.ctx.Request())
 }
 
 func (s *serverCtx) Response() cenery.Response {
-	return NewResponse(s.ctx.Response())
+	//return NewResponse(s.ctx.Response())
+	return s.resp
+}
+
+func (s *serverCtx) Next() error {
+	if s.next != nil {
+		return s.next(s.ctx)
+	}
+	return nil
 }

@@ -52,3 +52,7 @@ func (s *serverCtx) Request() cenery.Request {
 func (s *serverCtx) Response() cenery.Response {
 	return NewResponse(s.ctx.Response())
 }
+
+func (s *serverCtx) Next() error {
+	return s.ctx.Next()
+}

@@ -19,6 +19,7 @@ func NewRequest(req *http.Request) cenery.Request {
 func (h *request) Body() []byte {
 	if h.req.Body != nil {
 		data, _ := io.ReadAll(h.req.Body)
+		h.SetBody(data) // Reset
 		return data
 	}
 	return nil

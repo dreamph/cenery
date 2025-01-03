@@ -51,32 +51,11 @@ func NewFiber() cenery.App {
 }
 
 func main() {
-	//app := NewFiber()
-	app := NewEcho()
+	app := NewFiber()
+	//app := NewEcho()
 
 	app.Get("/", func(c cenery.Ctx) error {
 		return c.SendString(200, "hello")
-	})
-
-	app.Post("/create", func(c cenery.Ctx) error {
-		request := &CreateRequest{}
-		err := c.BodyParser(request)
-		if err != nil {
-			return c.SendJSON(400, &ErrorResponse{Message: err.Error()})
-		}
-		return c.SendJSON(200, &CreateResponse{Data: "welcome : " + request.Name})
-	})
-
-	app.Post("/upload", func(c cenery.Ctx) error {
-		request := &UploadRequest{}
-		err := c.BodyParser(request)
-		if err != nil {
-			return c.SendJSON(400, &ErrorResponse{Message: err.Error()})
-		}
-
-		request.File = c.FormFile("file")
-
-		return c.SendJSON(200, &UploadResponse{Name: request.Name, FileName: request.File.FileName})
 	})
 
 	err := app.Listen(":2000")

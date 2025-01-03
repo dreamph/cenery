@@ -20,6 +20,7 @@ type Ctx interface {
 
 	Request() Request
 	Response() Response
+	Next() error
 }
 
 type Request interface {
@@ -42,8 +43,6 @@ type Response interface {
 
 type Handler = func(Ctx) error
 
-//type Middleware func(next Handler) Handler
-
 type App interface {
 	Get(path string, handlers ...Handler)
 	Post(path string, handlers ...Handler)
@@ -54,6 +53,6 @@ type App interface {
 	Connect(path string, handlers ...Handler)
 	Patch(path string, handlers ...Handler)
 	Trace(path string, handlers ...Handler)
-	//Use(middlewares ...func(next Handler) Handler)
+	Use(handlers ...Handler)
 	Listen(addr string) error
 }
