@@ -1,6 +1,7 @@
 package fiber
 
 import (
+	"context"
 	"github.com/dreamph/cenery"
 	"github.com/gofiber/fiber/v2"
 )
@@ -60,6 +61,10 @@ func (a *app) Patch(path string, handlers ...cenery.Handler) {
 
 func (a *app) Trace(path string, handlers ...cenery.Handler) {
 	a.server.Trace(path, a.toHandlers(handlers...)...)
+}
+
+func (a *app) Shutdown(_ context.Context) error {
+	return a.server.Shutdown()
 }
 
 func (a *app) processHandlers(c *fiber.Ctx, handlers ...cenery.Handler) error {

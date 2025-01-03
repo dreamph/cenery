@@ -1,6 +1,7 @@
 package echo
 
 import (
+	"context"
 	"github.com/dreamph/cenery"
 	"github.com/labstack/echo/v4"
 )
@@ -74,6 +75,10 @@ func (a *app) Patch(path string, handlers ...cenery.Handler) {
 func (a *app) Trace(path string, handlers ...cenery.Handler) {
 	handler, middlewareHandlers := a.toHandlers(handlers)
 	a.server.TRACE(path, handler, middlewareHandlers...)
+}
+
+func (a *app) Shutdown(ctx context.Context) error {
+	return a.server.Shutdown(ctx)
 }
 
 func (a *app) toHandlers(handlers []cenery.Handler) (func(c echo.Context) error, []echo.MiddlewareFunc) {

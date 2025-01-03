@@ -11,12 +11,15 @@ Install
 go get github.com/dreamph/cenery
 ```
 
-Examples
+Example
 =======
 ``` go
 package main
 
 import (
+	"fmt"
+	"log"
+
 	"github.com/dreamph/cenery"
 	echoengine "github.com/dreamph/cenery/engine/echo"
 	fiberengine "github.com/dreamph/cenery/engine/fiber"
@@ -25,7 +28,6 @@ import (
 	fiberrecover "github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
-	"log"
 )
 
 type ErrorResponse struct {
@@ -50,13 +52,17 @@ type UploadResponse struct {
 	FileName string `json:"fileName"`
 }
 
-func NewEcho() cenery.App {
+func NewEchoWithCustomize() cenery.App {
 	echoApp := echo.New()
 	echoApp.Use(echomiddleware.Recover())
 	return echoengine.New(echoApp)
 }
 
-func NewFiber() cenery.App {
+func NewEchoApp() cenery.App {
+	return echoengine.NewApp()
+}
+
+func NewFiberAppWithCustomize() cenery.App {
 	fiberApp := fiber.New(fiber.Config{
 		JSONDecoder: gojson.Unmarshal,
 		JSONEncoder: gojson.Marshal,
@@ -65,8 +71,19 @@ func NewFiber() cenery.App {
 	return fiberengine.New(fiberApp)
 }
 
+func NewFiberApp() cenery.App {
+	return fiberengine.NewApp()
+}
+
 func main() {
-	app := NewFiber() //NewEcho()
+	app := NewFiberApp()
+	// or
+	// app := NewEchoApp()
+
+	app.Use(func(c cenery.Ctx) error {
+		fmt.Println("global middleware")
+		return c.Next()
+	})
 
 	app.Get("/", func(c cenery.Ctx) error {
 		return c.SendString(200, "hello")
@@ -82,6 +99,7 @@ func main() {
 	})
 
 	app.Post("/upload", func(c cenery.Ctx) error {
+		fmt.Println("handler uploading..")
 		request := &UploadRequest{}
 		err := c.BodyParser(request)
 		if err != nil {
@@ -89,6 +107,10 @@ func main() {
 		}
 
 		request.File = c.FormFile("file")
+
+		fmt.Println("handler upload success")
+
+		c.Response().SetHeader("TEST", "1")
 
 		return c.SendJSON(200, &UploadResponse{Name: request.Name, FileName: request.File.FileName})
 	})
@@ -101,6 +123,7 @@ func main() {
 
 //curl -X POST http://localhost:2000/create -d '{"name":"cenery"}'
 //curl -v -F name=cenery -F file=@test.txt http://localhost:2000/upload
+
 
 ```
 

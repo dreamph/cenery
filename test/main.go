@@ -60,19 +60,14 @@ func NewFiberApp() cenery.App {
 }
 
 func main() {
-	app := NewFiberApp()
-	//app := NewEchoApp()
+	// for fiber
+	app := NewFiberApp() // or NewFiberAppWithCustomize()
+
+	// for echo
+	// app := NewEchoApp()
+
 	app.Use(func(c cenery.Ctx) error {
-		fmt.Println("global middleware1")
-		fmt.Println(string(c.Request().Body()))
-		e := c.Next()
-		fmt.Println("global middleware1 end")
-		fmt.Println(string(c.Response().Body()))
-		fmt.Println(c.Response().GetHeader("TEST"))
-		return e
-	})
-	app.Use(func(c cenery.Ctx) error {
-		fmt.Println("global middleware2")
+		fmt.Println("global middleware")
 		return c.Next()
 	})
 
@@ -90,11 +85,6 @@ func main() {
 	})
 
 	app.Post("/upload", func(c cenery.Ctx) error {
-		fmt.Println("upload middleware start")
-		_ = c.Next()
-		fmt.Println("upload middleware end")
-		return nil
-	}, func(c cenery.Ctx) error {
 		fmt.Println("handler uploading..")
 		request := &UploadRequest{}
 		err := c.BodyParser(request)

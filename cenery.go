@@ -1,5 +1,7 @@
 package cenery
 
+import "context"
+
 type FileData struct {
 	FileData        []byte `json:"fileData"`
 	FileName        string `json:"fileName"`
@@ -55,4 +57,5 @@ type App interface {
 	Trace(path string, handlers ...Handler)
 	Use(handlers ...Handler)
 	Listen(addr string) error
+	Shutdown(ctx context.Context) error
 }
