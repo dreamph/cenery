@@ -1,6 +1,8 @@
 package fiber
 
 import (
+	"io"
+
 	"github.com/dreamph/cenery"
 	"github.com/gofiber/fiber/v2"
 )
@@ -21,7 +23,7 @@ func (s *serverCtx) QueryParam(key string, defaultValue ...string) string {
 	return s.ctx.Query(key, defaultValue...)
 }
 
-func (s *serverCtx) BodyParser(out interface{}) error {
+func (s *serverCtx) BodyParser(out any) error {
 	return s.ctx.BodyParser(out)
 }
 
@@ -33,6 +35,14 @@ func (s *serverCtx) FormFiles(fileKey string) *[]cenery.FileData {
 	return FormFiles(s.ctx, fileKey)
 }
 
+func (s *serverCtx) FormFileStream(fileKey string) (*cenery.FileStream, error) {
+	return FormFileStream(s.ctx, fileKey)
+}
+
+func (s *serverCtx) FormFilesStream(fileKey string) ([]*cenery.FileStream, error) {
+	return FormFilesStream(s.ctx, fileKey)
+}
+
 func (s *serverCtx) SendString(status int, data string) error {
 	return s.ctx.Status(status).SendString(data)
 }
@@ -41,8 +51,14 @@ func (s *serverCtx) Send(status int, data []byte) error {
 	return s.ctx.Status(status).Send(data)
 }
 
-func (s *serverCtx) SendJSON(status int, data interface{}) error {
+func (s *serverCtx) SendJSON(status int, data any) error {
 	return s.ctx.Status(status).JSON(data)
+}
+
+func (s *serverCtx) SendStream(status int, contentType string, reader io.Reader) error {
+	s.ctx.Set("Content-Type", contentType)
+	s.ctx.Status(status)
+	return s.ctx.SendStream(reader)
 }
 
 func (s *serverCtx) Request() cenery.Request {

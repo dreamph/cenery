@@ -5,8 +5,8 @@ import (
 	"log"
 
 	"github.com/dreamph/cenery"
-	echoengine "github.com/dreamph/cenery/engine/echo"
-	fiberengine "github.com/dreamph/cenery/engine/fiber"
+	echoengine "github.com/dreamph/cenery/echo"
+	fiberengine "github.com/dreamph/cenery/fiber"
 	gojson "github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	fiberrecover "github.com/gofiber/fiber/v2/middleware/recover"
@@ -48,8 +48,9 @@ func NewEchoApp() cenery.App {
 
 func NewFiberAppWithCustomize() cenery.App {
 	fiberApp := fiber.New(fiber.Config{
-		JSONDecoder: gojson.Unmarshal,
-		JSONEncoder: gojson.Marshal,
+		JSONDecoder:       gojson.Unmarshal,
+		JSONEncoder:       gojson.Marshal,
+		StreamRequestBody: true,
 	})
 	fiberApp.Use(fiberrecover.New())
 	return fiberengine.New(fiberApp)
@@ -61,18 +62,22 @@ func NewFiberApp() cenery.App {
 
 func main() {
 	// for fiber
-	app := NewFiberApp() // or NewFiberAppWithCustomize()
+	//app := NewFiberApp() // or NewFiberAppWithCustomize()
 
 	// for echo
-	// app := NewEchoApp()
+	app := NewEchoApp() // or NewEchoWithCustomize()
 
 	app.Use(func(c cenery.Ctx) error {
-		fmt.Println("global middleware")
+		//fmt.Println("global middleware")
 		return c.Next()
 	})
 
 	app.Get("/", func(c cenery.Ctx) error {
 		return c.SendString(200, "hello")
+	})
+
+	app.Get("/json", func(c cenery.Ctx) error {
+		return c.SendJSON(200, "hello")
 	})
 
 	app.Post("/create", func(c cenery.Ctx) error {

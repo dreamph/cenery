@@ -1,6 +1,8 @@
 package fiber
 
 import (
+	"io"
+
 	"github.com/dreamph/cenery"
 	"github.com/valyala/fasthttp"
 )
@@ -19,6 +21,10 @@ func (h *request) Body() []byte {
 
 func (h *request) SetBody(data []byte) {
 	h.req.SetBody(data)
+}
+
+func (h *request) BodyStream() io.ReadCloser {
+	return io.NopCloser(h.req.BodyStream())
 }
 
 func (h *request) GetHeader(key string) string {

@@ -2,6 +2,7 @@ package fiber
 
 import (
 	"context"
+
 	"github.com/dreamph/cenery"
 	"github.com/gofiber/fiber/v2"
 )
@@ -20,9 +21,9 @@ func (a *app) Listen(addr string) error {
 
 func (a *app) Use(handlers ...cenery.Handler) {
 	apiHandlers := a.toHandlers(handlers...)
-	var middlewareHandlers []interface{}
-	for _, handler := range apiHandlers {
-		middlewareHandlers = append(middlewareHandlers, handler)
+	middlewareHandlers := make([]any, len(apiHandlers))
+	for i, handler := range apiHandlers {
+		middlewareHandlers[i] = handler
 	}
 	a.server.Use(middlewareHandlers...)
 }
@@ -67,29 +68,14 @@ func (a *app) Shutdown(_ context.Context) error {
 	return a.server.Shutdown()
 }
 
-func (a *app) processHandlers(c *fiber.Ctx, handlers ...cenery.Handler) error {
-	svc := NewServerCtx(c)
-	for _, handler := range handlers {
-		err := handler(svc)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func (a *app) toHandlers(handlers ...cenery.Handler) []fiber.Handler {
-	var handlerList []fiber.Handler
-	for _, handler := range handlers {
-		h := func(c *fiber.Ctx) error {
+	handlerList := make([]fiber.Handler, len(handlers))
+	for i, handler := range handlers {
+		h := handler // Copy variable to avoid closure capture bug
+		handlerList[i] = func(c *fiber.Ctx) error {
 			svc := NewServerCtx(c)
-			err := handler(svc)
-			if err != nil {
-				return err
-			}
-			return nil
+			return h(svc)
 		}
-		handlerList = append(handlerList, h)
 	}
 	return handlerList
 }

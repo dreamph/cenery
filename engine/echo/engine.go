@@ -8,6 +8,8 @@ import (
 
 func NewApp() cenery.App {
 	echoApp := echo.New()
+	echoApp.JSONSerializer = fastJSONSerializer{}
+	echoApp.Binder = &fastBinder{}
 	echoApp.Use(echomiddleware.Recover())
 	return New(echoApp)
 }

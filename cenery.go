@@ -1,6 +1,10 @@
 package cenery
 
-import "context"
+import (
+	"context"
+	"io"
+	"mime/multipart"
+)
 
 type FileData struct {
 	FileData        []byte `json:"fileData"`
@@ -9,16 +13,29 @@ type FileData struct {
 	FileContentType string `json:"fileContentType"`
 }
 
+type FileStream struct {
+	File            multipart.File
+	FileName        string
+	FileSize        int64
+	FileContentType string
+}
+
 type Ctx interface {
 	Params(key string, defaultValue ...string) string
 	QueryParam(key string, defaultValue ...string) string
-	BodyParser(out interface{}) error
+	BodyParser(out any) error
 	FormFile(fileKey string) *FileData
 	FormFiles(fileKey string) *[]FileData
 
+	FormFileStream(fileKey string) (*FileStream, error)
+	FormFilesStream(fileKey string) ([]*FileStream, error)
+
 	SendString(status int, data string) error
 	Send(status int, data []byte) error
-	SendJSON(status int, data interface{}) error
+	SendJSON(status int, data any) error
+
+	// Streaming response (no memory allocation)
+	SendStream(status int, contentType string, reader io.Reader) error
 
 	Request() Request
 	Response() Response
@@ -28,6 +45,8 @@ type Ctx interface {
 type Request interface {
 	Body() []byte
 	SetBody(data []byte)
+
+	BodyStream() io.ReadCloser
 
 	GetHeader(key string) string
 	SetHeader(key string, val string)

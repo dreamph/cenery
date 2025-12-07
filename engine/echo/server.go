@@ -2,6 +2,7 @@ package echo
 
 import (
 	"context"
+
 	"github.com/dreamph/cenery"
 	"github.com/labstack/echo/v4"
 )
@@ -20,13 +21,10 @@ func (a *app) Listen(addr string) error {
 
 func (a *app) Use(handlers ...cenery.Handler) {
 	for _, handler := range handlers {
+		h := handler // Copy variable to avoid closure capture bug
 		a.server.Use(func(next echo.HandlerFunc) echo.HandlerFunc {
 			return func(c echo.Context) error {
-				err := a.processHandler(c, handler, next)
-				if err != nil {
-					return err
-				}
-				return nil
+				return a.processHandler(c, h, next)
 			}
 		})
 	}
@@ -85,31 +83,22 @@ func (a *app) toHandlers(handlers []cenery.Handler) (func(c echo.Context) error,
 	var handler func(c echo.Context) error
 	var middlewareHandlers []echo.MiddlewareFunc
 	if len(handlers) == 1 {
+		h := handlers[0]
 		handler = func(c echo.Context) error {
-			err := a.processHandler(c, handlers[0], nil)
-			if err != nil {
-				return err
-			}
-			return nil
+			return a.processHandler(c, h, nil)
 		}
 	} else {
+		h := handlers[len(handlers)-1]
 		handler = func(c echo.Context) error {
-			err := a.processHandler(c, handlers[len(handlers)-1], nil)
-			if err != nil {
-				return err
-			}
-			return nil
+			return a.processHandler(c, h, nil)
 		}
 
 		middlewares := handlers[:len(handlers)-1]
 		for _, middleware := range middlewares {
+			m := middleware // Copy variable to avoid closure capture bug
 			middlewareHandler := func(next echo.HandlerFunc) echo.HandlerFunc {
 				return func(c echo.Context) error {
-					err := a.processHandler(c, middleware, next)
-					if err != nil {
-						return err
-					}
-					return nil
+					return a.processHandler(c, m, next)
 				}
 			}
 
@@ -121,10 +110,5 @@ func (a *app) toHandlers(handlers []cenery.Handler) (func(c echo.Context) error,
 
 func (a *app) processHandler(c echo.Context, handler cenery.Handler, next echo.HandlerFunc) error {
 	svc := NewServerCtx(c, next)
-	err := handler(svc)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return handler(svc)
 }

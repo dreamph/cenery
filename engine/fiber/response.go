@@ -26,7 +26,7 @@ func (h *response) GetHeader(key string) string {
 }
 
 func (h *response) SetHeader(key string, val string) {
-	h.resp.Header.Add(key, val)
+	h.resp.Header.Set(key, val)
 }
 
 func (h *response) AddHeader(key string, val string) {

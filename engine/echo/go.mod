@@ -1,12 +1,13 @@
 module github.com/dreamph/cenery/echo
 
-go 1.23
+go 1.24.0
 
 replace github.com/dreamph/cenery => ../../
 
 require (
-	github.com/dreamph/cenery v1.0.0
-	github.com/labstack/echo/v4 v4.13.3
+	github.com/dreamph/cenery v1.0.1
+	github.com/goccy/go-json v0.10.5
+	github.com/labstack/echo/v4 v4.13.4
 )
 
 require (
@@ -15,9 +16,9 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
-	golang.org/x/crypto v0.32.0 // indirect
-	golang.org/x/net v0.34.0 // indirect
-	golang.org/x/sys v0.29.0 // indirect
-	golang.org/x/text v0.21.0 // indirect
-	golang.org/x/time v0.9.0 // indirect
+	golang.org/x/crypto v0.45.0 // indirect
+	golang.org/x/net v0.47.0 // indirect
+	golang.org/x/sys v0.38.0 // indirect
+	golang.org/x/text v0.31.0 // indirect
+	golang.org/x/time v0.14.0 // indirect
 )

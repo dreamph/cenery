@@ -1,10 +1,11 @@
 package main
 
 import (
+	"log"
+
 	gojson "github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	fiberrecover "github.com/gofiber/fiber/v2/middleware/recover"
-	"log"
 )
 
 func main() {

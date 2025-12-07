@@ -18,8 +18,13 @@ func NewRequest(req *http.Request) cenery.Request {
 
 func (h *request) Body() []byte {
 	if h.req.Body != nil {
-		data, _ := io.ReadAll(h.req.Body)
-		h.SetBody(data) // Reset
+		data, err := io.ReadAll(h.req.Body)
+		if err != nil {
+			// Reset body even on error to prevent reading again
+			h.SetBody(nil)
+			return nil
+		}
+		h.SetBody(data) // Reset for re-reading
 		return data
 	}
 	return nil
@@ -27,6 +32,10 @@ func (h *request) Body() []byte {
 
 func (h *request) SetBody(data []byte) {
 	h.req.Body = io.NopCloser(bytes.NewReader(data))
+}
+
+func (h *request) BodyStream() io.ReadCloser {
+	return h.req.Body
 }
 
 func (h *request) GetHeader(key string) string {

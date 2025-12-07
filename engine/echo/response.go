@@ -1,9 +1,12 @@
 package echo
 
 import (
+	"bufio"
 	"bytes"
 	"io"
+	"net"
 	"net/http"
+	"sync/atomic"
 
 	"github.com/dreamph/cenery"
 	"github.com/labstack/echo/v4"
@@ -19,18 +22,56 @@ func (w *responseBodyWriter) Write(b []byte) (int, error) {
 	return w.Writer.Write(b)
 }
 
+func (w *responseBodyWriter) Flush() {
+	if flusher, ok := w.ResponseWriter.(http.Flusher); ok {
+		flusher.Flush()
+	}
+}
+
+func (w *responseBodyWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
+	if hj, ok := w.ResponseWriter.(http.Hijacker); ok {
+		return hj.Hijack()
+	}
+	return nil, nil, http.ErrNotSupported
+}
+
+func (w *responseBodyWriter) CloseNotify() <-chan bool {
+	if cn, ok := w.ResponseWriter.(http.CloseNotifier); ok {
+		return cn.CloseNotify()
+	}
+	return make(chan bool)
+}
+
+func (w *responseBodyWriter) Push(target string, opts *http.PushOptions) error {
+	if pusher, ok := w.ResponseWriter.(http.Pusher); ok {
+		return pusher.Push(target, opts)
+	}
+	return http.ErrNotSupported
+}
+
 type response struct {
 	resp    *echo.Response
 	resBody *bytes.Buffer
 }
 
+var captureResponseBody atomic.Bool
+
+// EnableResponseCapture toggles response body capture (for logging/testing).
+// When disabled, response bodies are not buffered to avoid extra allocs/writes.
+func EnableResponseCapture(enabled bool) {
+	captureResponseBody.Store(enabled)
+}
+
 func NewResponse(resp *echo.Response) cenery.Response {
-	resBodyBuffer := &bytes.Buffer{}
-	writer := &responseBodyWriter{
-		Writer:         io.MultiWriter(resp.Writer, resBodyBuffer),
-		ResponseWriter: resp.Writer,
+	var resBodyBuffer *bytes.Buffer
+	if captureResponseBody.Load() {
+		resBodyBuffer = &bytes.Buffer{}
+		writer := &responseBodyWriter{
+			Writer:         io.MultiWriter(resp.Writer, resBodyBuffer),
+			ResponseWriter: resp.Writer,
+		}
+		resp.Writer = writer
 	}
-	resp.Writer = writer
 
 	return &response{
 		resp:    resp,
@@ -39,10 +80,9 @@ func NewResponse(resp *echo.Response) cenery.Response {
 }
 
 func (h *response) Body() []byte {
-	/*resBody := new(bytes.Buffer)
-	_ = io.MultiWriter(h.resp.Writer, resBody)
-
-	io.ReadAll(c.Request().Body)*/
+	if h.resBody == nil {
+		return nil
+	}
 	return h.resBody.Bytes()
 }
 

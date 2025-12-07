@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/dreamph/cenery"
-	fiberengine "github.com/dreamph/cenery/engine/fiber"
+	fiberengine "github.com/dreamph/cenery/fiber"
 	gojson "github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	fiberrecover "github.com/gofiber/fiber/v2/middleware/recover"
