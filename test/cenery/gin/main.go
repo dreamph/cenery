@@ -21,6 +21,10 @@ func main() {
 		return c.SendString(200, "hello")
 	})
 
+	app.Get("/:id", func(c cenery.Ctx) error {
+		return c.SendString(200, c.Params("id"))
+	})
+
 	err := app.Listen(":2003")
 	if err != nil {
 		log.Fatal(err.Error())
