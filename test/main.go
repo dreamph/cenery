@@ -7,8 +7,10 @@ import (
 	"github.com/dreamph/cenery"
 	chiengine "github.com/dreamph/cenery/chi"
 	echoengine "github.com/dreamph/cenery/echo"
+	fasthttpengine "github.com/dreamph/cenery/fasthttp"
 	fiberengine "github.com/dreamph/cenery/fiber"
 	ginengine "github.com/dreamph/cenery/gin"
+	"github.com/fasthttp/router"
 	"github.com/gin-gonic/gin"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -85,6 +87,15 @@ func NewChiApp() cenery.App {
 	return chiengine.NewApp()
 }
 
+func NewFastHTTPWithCustomize() cenery.App {
+	routerApp := router.New()
+	return fasthttpengine.New(routerApp)
+}
+
+func NewFastHTTPApp() cenery.App {
+	return fasthttpengine.NewApp()
+}
+
 func main() {
 	// for fiber
 	//app := NewFiberApp() // or NewFiberAppWithCustomize()
@@ -97,6 +108,9 @@ func main() {
 
 	// for chi
 	//app := NewChiApp() // or NewChiWithCustomize()
+
+	// for fasthttp
+	//app := NewFastHTTPApp() // or NewFastHTTPWithCustomize()
 
 	app.Use(func(c cenery.Ctx) error {
 		//fmt.Println("global middleware")

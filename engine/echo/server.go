@@ -2,6 +2,7 @@ package echo
 
 import (
 	"context"
+	"os"
 
 	"github.com/dreamph/cenery"
 	"github.com/labstack/echo/v4"
@@ -16,6 +17,7 @@ func New(server *echo.Echo) cenery.App {
 }
 
 func (a *app) Listen(addr string) error {
+	_ = cenery.PrintLogo(os.Stdout)
 	return a.server.Start(addr)
 }
 

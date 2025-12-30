@@ -6,6 +6,7 @@ replace (
 	github.com/dreamph/cenery => ../
 	github.com/dreamph/cenery/chi => ../engine/chi
 	github.com/dreamph/cenery/echo => ../engine/echo
+	github.com/dreamph/cenery/fasthttp => ../engine/fasthttp
 	github.com/dreamph/cenery/fiber => ../engine/fiber
 	github.com/dreamph/cenery/gin => ../engine/gin
 )
@@ -14,8 +15,10 @@ require (
 	github.com/dreamph/cenery v1.0.1
 	github.com/dreamph/cenery/chi v0.0.0
 	github.com/dreamph/cenery/echo v0.0.0
+	github.com/dreamph/cenery/fasthttp v0.0.0
 	github.com/dreamph/cenery/fiber v0.0.0
 	github.com/dreamph/cenery/gin v0.0.0
+	github.com/fasthttp/router v1.5.4
 	github.com/gin-gonic/gin v1.11.0
 	github.com/go-chi/chi/v5 v5.2.3
 	github.com/goccy/go-json v0.10.5
@@ -50,6 +53,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect
 	github.com/quic-go/qpack v0.5.1 // indirect
 	github.com/quic-go/quic-go v0.54.0 // indirect
+	github.com/savsgio/gotils v0.0.0-20240704082632-aef3928b8a38 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.3.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect

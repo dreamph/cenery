@@ -3,6 +3,7 @@ package gin
 import (
 	"context"
 	"net/http"
+	"os"
 
 	"github.com/dreamph/cenery"
 	"github.com/gin-gonic/gin"
@@ -18,6 +19,7 @@ func New(server *gin.Engine) cenery.App {
 }
 
 func (a *app) Listen(addr string) error {
+	_ = cenery.PrintLogo(os.Stdout)
 	a.httpServer = &http.Server{
 		Addr:    addr,
 		Handler: a.server,
