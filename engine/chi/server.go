@@ -34,47 +34,82 @@ func (a *app) Use(handlers ...cenery.Handler) {
 
 func (a *app) Get(path string, handlers ...cenery.Handler) {
 	handler, middlewares := a.toHandlers(handlers...)
-	a.server.With(middlewares...).Get(path, handler)
+	a.server.With(middlewares...).Get(normalizePath(path), handler)
 }
 
 func (a *app) Post(path string, handlers ...cenery.Handler) {
 	handler, middlewares := a.toHandlers(handlers...)
-	a.server.With(middlewares...).Post(path, handler)
+	a.server.With(middlewares...).Post(normalizePath(path), handler)
 }
 
 func (a *app) Put(path string, handlers ...cenery.Handler) {
 	handler, middlewares := a.toHandlers(handlers...)
-	a.server.With(middlewares...).Put(path, handler)
+	a.server.With(middlewares...).Put(normalizePath(path), handler)
 }
 
 func (a *app) Delete(path string, handlers ...cenery.Handler) {
 	handler, middlewares := a.toHandlers(handlers...)
-	a.server.With(middlewares...).Delete(path, handler)
+	a.server.With(middlewares...).Delete(normalizePath(path), handler)
 }
 
 func (a *app) Head(path string, handlers ...cenery.Handler) {
 	handler, middlewares := a.toHandlers(handlers...)
-	a.server.With(middlewares...).Head(path, handler)
+	a.server.With(middlewares...).Head(normalizePath(path), handler)
 }
 
 func (a *app) Options(path string, handlers ...cenery.Handler) {
 	handler, middlewares := a.toHandlers(handlers...)
-	a.server.With(middlewares...).Options(path, handler)
+	a.server.With(middlewares...).Options(normalizePath(path), handler)
 }
 
 func (a *app) Connect(path string, handlers ...cenery.Handler) {
 	handler, middlewares := a.toHandlers(handlers...)
-	a.server.With(middlewares...).MethodFunc(http.MethodConnect, path, handler)
+	a.server.With(middlewares...).MethodFunc(http.MethodConnect, normalizePath(path), handler)
 }
 
 func (a *app) Patch(path string, handlers ...cenery.Handler) {
 	handler, middlewares := a.toHandlers(handlers...)
-	a.server.With(middlewares...).Patch(path, handler)
+	a.server.With(middlewares...).Patch(normalizePath(path), handler)
 }
 
 func (a *app) Trace(path string, handlers ...cenery.Handler) {
 	handler, middlewares := a.toHandlers(handlers...)
-	a.server.With(middlewares...).MethodFunc(http.MethodTrace, path, handler)
+	a.server.With(middlewares...).MethodFunc(http.MethodTrace, normalizePath(path), handler)
+}
+
+func normalizePath(path string) string {
+	if path == "" {
+		return path
+	}
+
+	var out []byte
+	for i := 0; i < len(path); i++ {
+		if path[i] != ':' {
+			out = append(out, path[i])
+			continue
+		}
+
+		if i > 0 && path[i-1] != '/' {
+			out = append(out, path[i])
+			continue
+		}
+
+		j := i + 1
+		for j < len(path) && path[j] != '/' {
+			j++
+		}
+		if j == i+1 {
+			out = append(out, path[i])
+			continue
+		}
+
+		out = append(out, '{')
+		out = append(out, path[i+1:j]...)
+		out = append(out, '}')
+		i = j - 1
+	}
+
+	return string(out)
 }
 
 func (a *app) Shutdown(ctx context.Context) error {

@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/dreamph/cenery"
 	"github.com/gin-gonic/gin"
 )
 
@@ -57,19 +58,18 @@ func TestQueryParam(t *testing.T) {
 
 func TestRouteParam(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	r := gin.New()
-	r.GET("/users/:id", func(c *gin.Context) {
-		ctx := NewServerCtx(c)
-		if got := ctx.Params("id"); got != "123" {
-			c.String(http.StatusBadRequest, got)
-			return
+	server := gin.New()
+	a := New(server).(*app)
+	a.Get("/users/:id", func(c cenery.Ctx) error {
+		if got := c.Params("id"); got != "123" {
+			return c.SendString(http.StatusBadRequest, got)
 		}
-		c.String(http.StatusOK, "ok")
+		return c.SendString(http.StatusOK, "ok")
 	})
 
 	req := httptest.NewRequest(http.MethodGet, "/users/123", nil)
 	rec := httptest.NewRecorder()
-	r.ServeHTTP(rec, req)
+	server.ServeHTTP(rec, req)
 
 	if rec.Code != http.StatusOK {
 		t.Fatalf("status = %v, want %v", rec.Code, http.StatusOK)

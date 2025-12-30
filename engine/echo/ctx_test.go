@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/dreamph/cenery"
 	"github.com/labstack/echo/v4"
 )
 
@@ -64,12 +65,12 @@ func TestQueryParam(t *testing.T) {
 
 func TestRouteParam(t *testing.T) {
 	e := echo.New()
-	e.GET("/users/:id", func(c echo.Context) error {
-		ctx := NewServerCtx(c, nil)
-		if got := ctx.Params("id"); got != "123" {
-			return c.String(http.StatusBadRequest, got)
+	a := New(e).(*app)
+	a.Get("/users/:id", func(c cenery.Ctx) error {
+		if got := c.Params("id"); got != "123" {
+			return c.SendString(http.StatusBadRequest, got)
 		}
-		return c.String(http.StatusOK, "ok")
+		return c.SendString(http.StatusOK, "ok")
 	})
 
 	req := httptest.NewRequest(http.MethodGet, "/users/123", nil)

@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/dreamph/cenery"
 	"github.com/fasthttp/router"
 	"github.com/valyala/fasthttp"
 )
@@ -66,20 +67,18 @@ func TestQueryParam(t *testing.T) {
 }
 
 func TestRouteParam(t *testing.T) {
-	r := router.New()
-	r.GET("/users/:id", func(c *fasthttp.RequestCtx) {
-		ctx := NewServerCtx(c, nil)
-		if got := ctx.Params("id"); got != "123" {
-			c.SetStatusCode(fasthttp.StatusBadRequest)
-			c.SetBodyString(got)
-			return
+	routerApp := router.New()
+	a := New(routerApp).(*app)
+	a.Get("/users/:id", func(c cenery.Ctx) error {
+		if got := c.Params("id"); got != "123" {
+			return c.SendString(fasthttp.StatusBadRequest, got)
 		}
-		c.SetStatusCode(fasthttp.StatusOK)
-		c.SetBodyString("ok")
+		return c.SendString(fasthttp.StatusOK, "ok")
 	})
 
 	ctx := newCtx(fasthttp.MethodGet, "/users/123", nil, "")
-	r.Handler(ctx)
+	handler := a.Handler()
+	handler(ctx)
 
 	if ctx.Response.StatusCode() != fasthttp.StatusOK {
 		t.Fatalf("status = %v, want %v", ctx.Response.StatusCode(), fasthttp.StatusOK)

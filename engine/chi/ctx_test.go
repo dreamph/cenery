@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/dreamph/cenery"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -55,20 +56,18 @@ func TestQueryParam(t *testing.T) {
 }
 
 func TestRouteParam(t *testing.T) {
-	r := chi.NewRouter()
-	r.Get("/users/{id}", func(w http.ResponseWriter, r *http.Request) {
-		ctx := NewServerCtx(w, r, nil)
-		if got := ctx.Params("id"); got != "123" {
-			w.WriteHeader(http.StatusBadRequest)
-			_, _ = w.Write([]byte(got))
-			return
+	server := chi.NewRouter()
+	a := New(server).(*app)
+	a.Get("/users/:id", func(c cenery.Ctx) error {
+		if got := c.Params("id"); got != "123" {
+			return c.SendString(http.StatusBadRequest, got)
 		}
-		_, _ = w.Write([]byte("ok"))
+		return c.SendString(http.StatusOK, "ok")
 	})
 
 	req := httptest.NewRequest(http.MethodGet, "/users/123", nil)
 	rec := httptest.NewRecorder()
-	r.ServeHTTP(rec, req)
+	server.ServeHTTP(rec, req)
 
 	if rec.Code != http.StatusOK {
 		t.Fatalf("status = %v, want %v", rec.Code, http.StatusOK)

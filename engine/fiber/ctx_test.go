@@ -9,6 +9,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/dreamph/cenery"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -47,18 +48,17 @@ func TestFiberParams(t *testing.T) {
 }
 
 func TestFiberRouteParam(t *testing.T) {
-	app := fiber.New()
-
-	app.Get("/users/:id", func(c *fiber.Ctx) error {
-		ctx := NewServerCtx(c)
-		if got := ctx.Params("id"); got != "123" {
-			return c.Status(http.StatusBadRequest).SendString(got)
+	server := fiber.New()
+	a := New(server).(*app)
+	a.Get("/users/:id", func(c cenery.Ctx) error {
+		if got := c.Params("id"); got != "123" {
+			return c.SendString(http.StatusBadRequest, got)
 		}
-		return c.SendString("OK")
+		return c.SendString(http.StatusOK, "OK")
 	})
 
 	req := httptest.NewRequest(http.MethodGet, "/users/123", nil)
-	resp, err := app.Test(req)
+	resp, err := server.Test(req)
 	if err != nil {
 		t.Fatalf("Request failed: %v", err)
 	}
