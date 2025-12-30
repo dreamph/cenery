@@ -5,8 +5,13 @@ import (
 	"log"
 
 	"github.com/dreamph/cenery"
+	chiengine "github.com/dreamph/cenery/chi"
 	echoengine "github.com/dreamph/cenery/echo"
 	fiberengine "github.com/dreamph/cenery/fiber"
+	ginengine "github.com/dreamph/cenery/gin"
+	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	gojson "github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	fiberrecover "github.com/gofiber/fiber/v2/middleware/recover"
@@ -60,12 +65,38 @@ func NewFiberApp() cenery.App {
 	return fiberengine.NewApp()
 }
 
+func NewGinWithCustomize() cenery.App {
+	ginApp := gin.New()
+	ginApp.Use(gin.Recovery())
+	return ginengine.New(ginApp)
+}
+
+func NewGinApp() cenery.App {
+	return ginengine.NewApp()
+}
+
+func NewChiWithCustomize() cenery.App {
+	chiApp := chi.NewRouter()
+	chiApp.Use(middleware.Recoverer)
+	return chiengine.New(chiApp)
+}
+
+func NewChiApp() cenery.App {
+	return chiengine.NewApp()
+}
+
 func main() {
 	// for fiber
 	//app := NewFiberApp() // or NewFiberAppWithCustomize()
 
 	// for echo
 	app := NewEchoApp() // or NewEchoWithCustomize()
+
+	// for gin
+	//app := NewGinApp() // or NewGinWithCustomize()
+
+	// for chi
+	//app := NewChiApp() // or NewChiWithCustomize()
 
 	app.Use(func(c cenery.Ctx) error {
 		//fmt.Println("global middleware")

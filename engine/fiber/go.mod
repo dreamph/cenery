@@ -6,7 +6,9 @@ replace github.com/dreamph/cenery => ../../
 
 require (
 	github.com/dreamph/cenery v1.0.1
+	github.com/go-playground/form/v4 v4.3.0
 	github.com/goccy/go-json v0.10.5
+	github.com/goccy/go-reflect v1.2.0
 	github.com/gofiber/fiber/v2 v2.52.10
 	github.com/valyala/fasthttp v1.68.0
 )
