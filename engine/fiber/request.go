@@ -1,6 +1,7 @@
 package fiber
 
 import (
+	"bytes"
 	"io"
 
 	"github.com/dreamph/cenery"
@@ -24,7 +25,10 @@ func (h *request) SetBody(data []byte) {
 }
 
 func (h *request) BodyStream() io.ReadCloser {
-	return io.NopCloser(h.req.BodyStream())
+	if stream := h.req.BodyStream(); stream != nil {
+		return io.NopCloser(stream)
+	}
+	return io.NopCloser(bytes.NewReader(h.req.Body()))
 }
 
 func (h *request) GetHeader(key string) string {

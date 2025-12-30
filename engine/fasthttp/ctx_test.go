@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/fasthttp/router"
 	"github.com/valyala/fasthttp"
 )
 
@@ -64,6 +65,30 @@ func TestQueryParam(t *testing.T) {
 	}
 }
 
+func TestRouteParam(t *testing.T) {
+	r := router.New()
+	r.GET("/users/:id", func(c *fasthttp.RequestCtx) {
+		ctx := NewServerCtx(c, nil)
+		if got := ctx.Params("id"); got != "123" {
+			c.SetStatusCode(fasthttp.StatusBadRequest)
+			c.SetBodyString(got)
+			return
+		}
+		c.SetStatusCode(fasthttp.StatusOK)
+		c.SetBodyString("ok")
+	})
+
+	ctx := newCtx(fasthttp.MethodGet, "/users/123", nil, "")
+	r.Handler(ctx)
+
+	if ctx.Response.StatusCode() != fasthttp.StatusOK {
+		t.Fatalf("status = %v, want %v", ctx.Response.StatusCode(), fasthttp.StatusOK)
+	}
+	if string(ctx.Response.Body()) != "ok" {
+		t.Fatalf("body = %v, want %v", string(ctx.Response.Body()), "ok")
+	}
+}
+
 func TestBodyParser(t *testing.T) {
 	jsonData := `{"name":"test","value":123}`
 	ctx := newCtx(fasthttp.MethodPost, "/", []byte(jsonData), "application/json")
@@ -81,6 +106,47 @@ func TestBodyParser(t *testing.T) {
 
 	if result.Name != "test" || result.Value != 123 {
 		t.Errorf("BodyParser() parsed incorrectly: got %+v", result)
+	}
+}
+
+func TestBodyParserStream(t *testing.T) {
+	jsonData := `{"name":"test","value":123}`
+	ctx := newCtx(fasthttp.MethodPost, "/", []byte(jsonData), "application/json")
+
+	svc := NewServerCtx(ctx, nil)
+
+	var result struct {
+		Name  string `json:"name"`
+		Value int    `json:"value"`
+	}
+
+	if err := svc.BodyParserStream(&result); err != nil {
+		t.Errorf("BodyParserStream() error = %v", err)
+	}
+
+	if result.Name != "test" || result.Value != 123 {
+		t.Errorf("BodyParserStream() parsed incorrectly: got %+v", result)
+	}
+}
+
+func TestBodyStream(t *testing.T) {
+	jsonData := `{"name":"test"}`
+	ctx := newCtx(fasthttp.MethodPost, "/", []byte(jsonData), "")
+
+	svc := NewServerCtx(ctx, nil)
+
+	body := svc.BodyStream()
+	if body == nil {
+		t.Fatalf("BodyStream() returned nil")
+	}
+	defer body.Close()
+
+	data, err := io.ReadAll(body)
+	if err != nil {
+		t.Fatalf("BodyStream() read error: %v", err)
+	}
+	if string(data) != jsonData {
+		t.Errorf("BodyStream() = %v, want %v", string(data), jsonData)
 	}
 }
 
@@ -130,7 +196,6 @@ func TestSendStream(t *testing.T) {
 	if stream == nil {
 		t.Fatalf("SendStream() expected body stream")
 	}
-	defer func() { _ = stream.Close() }()
 
 	content, _ := io.ReadAll(stream)
 	if string(content) != "Hello, World!" {

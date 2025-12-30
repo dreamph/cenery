@@ -24,6 +24,8 @@ type Ctx interface {
 	Params(key string, defaultValue ...string) string
 	QueryParam(key string, defaultValue ...string) string
 	BodyParser(out any) error
+	BodyParserStream(out any) error
+	BodyStream() io.ReadCloser
 	FormFile(fileKey string) *FileData
 	FormFiles(fileKey string) *[]FileData
 

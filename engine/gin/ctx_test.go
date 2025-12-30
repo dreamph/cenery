@@ -55,6 +55,30 @@ func TestQueryParam(t *testing.T) {
 	}
 }
 
+func TestRouteParam(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	r := gin.New()
+	r.GET("/users/:id", func(c *gin.Context) {
+		ctx := NewServerCtx(c)
+		if got := ctx.Params("id"); got != "123" {
+			c.String(http.StatusBadRequest, got)
+			return
+		}
+		c.String(http.StatusOK, "ok")
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/users/123", nil)
+	rec := httptest.NewRecorder()
+	r.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("status = %v, want %v", rec.Code, http.StatusOK)
+	}
+	if rec.Body.String() != "ok" {
+		t.Fatalf("body = %v, want %v", rec.Body.String(), "ok")
+	}
+}
+
 func TestBodyParser(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	rec := httptest.NewRecorder()
@@ -76,6 +100,54 @@ func TestBodyParser(t *testing.T) {
 
 	if result.Name != "test" || result.Value != 123 {
 		t.Errorf("BodyParser() parsed incorrectly: got %+v", result)
+	}
+}
+
+func TestBodyParserStream(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	rec := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(rec)
+	jsonData := `{"name":"test","value":123}`
+	c.Request = httptest.NewRequest(http.MethodPost, "/", strings.NewReader(jsonData))
+	c.Request.Header.Set("Content-Type", "application/json")
+
+	ctx := NewServerCtx(c)
+
+	var result struct {
+		Name  string `json:"name"`
+		Value int    `json:"value"`
+	}
+
+	if err := ctx.BodyParserStream(&result); err != nil {
+		t.Errorf("BodyParserStream() error = %v", err)
+	}
+
+	if result.Name != "test" || result.Value != 123 {
+		t.Errorf("BodyParserStream() parsed incorrectly: got %+v", result)
+	}
+}
+
+func TestBodyStream(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	rec := httptest.NewRecorder()
+	c, _ := gin.CreateTestContext(rec)
+	jsonData := `{"name":"test"}`
+	c.Request = httptest.NewRequest(http.MethodPost, "/", strings.NewReader(jsonData))
+
+	ctx := NewServerCtx(c)
+
+	body := ctx.BodyStream()
+	if body == nil {
+		t.Fatalf("BodyStream() returned nil")
+	}
+	defer body.Close()
+
+	data, err := io.ReadAll(body)
+	if err != nil {
+		t.Fatalf("BodyStream() read error: %v", err)
+	}
+	if string(data) != jsonData {
+		t.Errorf("BodyStream() = %v, want %v", string(data), jsonData)
 	}
 }
 

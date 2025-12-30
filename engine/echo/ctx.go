@@ -2,6 +2,8 @@ package echo
 
 import (
 	"bytes"
+	"encoding/json"
+	"errors"
 	"io"
 	"sync"
 	"sync/atomic"
@@ -47,6 +49,24 @@ func (s *serverCtx) QueryParam(key string, defaultValue ...string) string {
 
 func (s *serverCtx) BodyParser(out any) error {
 	return s.ctx.Bind(out)
+}
+
+func (s *serverCtx) BodyParserStream(out any) error {
+	if s.ctx.Request().Body == nil {
+		return errors.New("request body can't be empty")
+	}
+	dec := json.NewDecoder(s.ctx.Request().Body)
+	if err := dec.Decode(out); err != nil {
+		if errors.Is(err, io.EOF) {
+			return nil
+		}
+		return err
+	}
+	return nil
+}
+
+func (s *serverCtx) BodyStream() io.ReadCloser {
+	return s.ctx.Request().Body
 }
 
 func (s *serverCtx) FormFile(fileKey string) *cenery.FileData {

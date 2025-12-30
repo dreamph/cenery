@@ -46,6 +46,30 @@ func TestFiberParams(t *testing.T) {
 	}
 }
 
+func TestFiberRouteParam(t *testing.T) {
+	app := fiber.New()
+
+	app.Get("/users/:id", func(c *fiber.Ctx) error {
+		ctx := NewServerCtx(c)
+		if got := ctx.Params("id"); got != "123" {
+			return c.Status(http.StatusBadRequest).SendString(got)
+		}
+		return c.SendString("OK")
+	})
+
+	req := httptest.NewRequest(http.MethodGet, "/users/123", nil)
+	resp, err := app.Test(req)
+	if err != nil {
+		t.Fatalf("Request failed: %v", err)
+	}
+	defer resp.Body.Close()
+
+	body, _ := io.ReadAll(resp.Body)
+	if string(body) != "OK" {
+		t.Errorf("Test failed: %s", string(body))
+	}
+}
+
 func TestFiberQueryParam(t *testing.T) {
 	app := fiber.New()
 
@@ -105,6 +129,80 @@ func TestFiberBodyParser(t *testing.T) {
 	jsonData := `{"name":"test","value":123}`
 	req := httptest.NewRequest(http.MethodPost, "/api/test", strings.NewReader(jsonData))
 	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := app.Test(req)
+	if err != nil {
+		t.Fatalf("Request failed: %v", err)
+	}
+	defer resp.Body.Close()
+
+	body, _ := io.ReadAll(resp.Body)
+	if string(body) != "OK" {
+		t.Errorf("Test failed: %s", string(body))
+	}
+}
+
+func TestFiberBodyParserStream(t *testing.T) {
+	app := fiber.New()
+
+	app.Post("/api/test", func(c *fiber.Ctx) error {
+		ctx := NewServerCtx(c)
+
+		var result struct {
+			Name  string `json:"name"`
+			Value int    `json:"value"`
+		}
+
+		if err := ctx.BodyParserStream(&result); err != nil {
+			return c.Status(400).SendString("Parse error: " + err.Error())
+		}
+
+		if result.Name != "test" || result.Value != 123 {
+			return c.SendString("Parsed incorrectly")
+		}
+
+		return c.SendString("OK")
+	})
+
+	jsonData := `{"name":"test","value":123}`
+	req := httptest.NewRequest(http.MethodPost, "/api/test", strings.NewReader(jsonData))
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := app.Test(req)
+	if err != nil {
+		t.Fatalf("Request failed: %v", err)
+	}
+	defer resp.Body.Close()
+
+	body, _ := io.ReadAll(resp.Body)
+	if string(body) != "OK" {
+		t.Errorf("Test failed: %s", string(body))
+	}
+}
+
+func TestFiberBodyStream(t *testing.T) {
+	app := fiber.New()
+
+	app.Post("/api/test", func(c *fiber.Ctx) error {
+		ctx := NewServerCtx(c)
+		body := ctx.BodyStream()
+		if body == nil {
+			return c.Status(400).SendString("BodyStream nil")
+		}
+		defer body.Close()
+
+		data, err := io.ReadAll(body)
+		if err != nil {
+			return c.Status(500).SendString("Read error: " + err.Error())
+		}
+		if string(data) != `{"name":"test"}` {
+			return c.SendString("Body mismatch")
+		}
+		return c.SendString("OK")
+	})
+
+	jsonData := `{"name":"test"}`
+	req := httptest.NewRequest(http.MethodPost, "/api/test", strings.NewReader(jsonData))
 
 	resp, err := app.Test(req)
 	if err != nil {

@@ -1,6 +1,8 @@
 package fiber
 
 import (
+	"encoding/json"
+	"errors"
 	"io"
 
 	"github.com/dreamph/cenery"
@@ -25,6 +27,25 @@ func (s *serverCtx) QueryParam(key string, defaultValue ...string) string {
 
 func (s *serverCtx) BodyParser(out any) error {
 	return s.ctx.BodyParser(out)
+}
+
+func (s *serverCtx) BodyParserStream(out any) error {
+	body := s.BodyStream()
+	if body == nil {
+		return errors.New("request body can't be empty")
+	}
+	dec := json.NewDecoder(body)
+	if err := dec.Decode(out); err != nil {
+		if errors.Is(err, io.EOF) {
+			return nil
+		}
+		return err
+	}
+	return nil
+}
+
+func (s *serverCtx) BodyStream() io.ReadCloser {
+	return NewRequest(s.ctx.Request()).BodyStream()
 }
 
 func (s *serverCtx) FormFile(fileKey string) *cenery.FileData {
