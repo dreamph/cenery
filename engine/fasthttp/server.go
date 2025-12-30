@@ -2,7 +2,6 @@ package fasthttp
 
 import (
 	"context"
-	"os"
 
 	"github.com/dreamph/cenery"
 	"github.com/fasthttp/router"
@@ -19,8 +18,11 @@ func New(routerApp *router.Router) cenery.App {
 	return &app{router: routerApp}
 }
 
+func (a *app) Name() string {
+	return "fasthttp"
+}
+
 func (a *app) Listen(addr string) error {
-	_ = cenery.PrintLogo(os.Stdout)
 	a.server = &fasthttp.Server{
 		Handler: a.router.Handler,
 	}

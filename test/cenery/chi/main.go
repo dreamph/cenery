@@ -9,20 +9,20 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func NewApp() cenery.App {
+func NewServerApp() cenery.ServerApp {
 	chiApp := chi.NewRouter()
 	chiApp.Use(middleware.Recoverer)
-	return chiengine.New(chiApp)
+	return cenery.NewServer(chiengine.New(chiApp))
 }
 
 func main() {
-	app := NewApp()
+	app := NewServerApp()
 
 	app.Get("/", func(c cenery.Ctx) error {
 		return c.SendString(200, "hello")
 	})
 
-	err := app.Listen(":2000")
+	err := app.Listen(":2004")
 	if err != nil {
 		log.Fatal(err.Error())
 	}

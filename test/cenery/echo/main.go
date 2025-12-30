@@ -10,20 +10,20 @@ import (
 	"github.com/dreamph/cenery"
 )
 
-func NewApp() cenery.App {
+func NewServerApp() cenery.ServerApp {
 	echoApp := echo.New()
 	echoApp.Use(echomiddleware.Recover())
-	return echoengine.New(echoApp)
+	return cenery.NewServer(echoengine.New(echoApp))
 }
 
 func main() {
-	app := NewApp()
+	app := NewServerApp()
 
 	app.Get("/", func(c cenery.Ctx) error {
 		return c.SendString(200, "hello")
 	})
 
-	err := app.Listen(":2000")
+	err := app.Listen(":2002")
 	if err != nil {
 		log.Fatal(err.Error())
 	}

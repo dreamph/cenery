@@ -8,20 +8,20 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewApp() cenery.App {
+func NewServerApp() cenery.ServerApp {
 	ginApp := gin.New()
 	ginApp.Use(gin.Recovery())
-	return ginengine.New(ginApp)
+	return cenery.NewServer(ginengine.New(ginApp))
 }
 
 func main() {
-	app := NewApp()
+	app := NewServerApp()
 
 	app.Get("/", func(c cenery.Ctx) error {
 		return c.SendString(200, "hello")
 	})
 
-	err := app.Listen(":2000")
+	err := app.Listen(":2003")
 	if err != nil {
 		log.Fatal(err.Error())
 	}

@@ -34,8 +34,8 @@ type CreateResponse struct {
 }
 
 type UploadRequest struct {
-	Name string           `json:"name"`
-	File *cenery.FileData `json:"-"`
+	Name string             `json:"name"`
+	File *cenery.FileStream `json:"-"`
 }
 
 type UploadResponse struct {
@@ -43,57 +43,57 @@ type UploadResponse struct {
 	FileName string `json:"fileName"`
 }
 
-func NewEchoWithCustomize() cenery.App {
+func NewEchoWithCustomize() cenery.ServerApp {
 	echoApp := echo.New()
 	echoApp.Use(echomiddleware.Recover())
-	return echoengine.New(echoApp)
+	return cenery.NewServer(echoengine.New(echoApp))
 }
 
-func NewEchoApp() cenery.App {
-	return echoengine.NewApp()
+func NewEchoApp() cenery.ServerApp {
+	return cenery.NewServer(echoengine.NewApp())
 }
 
-func NewFiberAppWithCustomize() cenery.App {
+func NewFiberAppWithCustomize() cenery.ServerApp {
 	fiberApp := fiber.New(fiber.Config{
 		JSONDecoder:       gojson.Unmarshal,
 		JSONEncoder:       gojson.Marshal,
 		StreamRequestBody: true,
 	})
 	fiberApp.Use(fiberrecover.New())
-	return fiberengine.New(fiberApp)
+	return cenery.NewServer(fiberengine.New(fiberApp))
 }
 
-func NewFiberApp() cenery.App {
-	return fiberengine.NewApp()
+func NewFiberApp() cenery.ServerApp {
+	return cenery.NewServer(fiberengine.NewApp())
 }
 
-func NewGinWithCustomize() cenery.App {
+func NewGinWithCustomize() cenery.ServerApp {
 	ginApp := gin.New()
 	ginApp.Use(gin.Recovery())
-	return ginengine.New(ginApp)
+	return cenery.NewServer(ginengine.New(ginApp))
 }
 
-func NewGinApp() cenery.App {
-	return ginengine.NewApp()
+func NewGinApp() cenery.ServerApp {
+	return cenery.NewServer(ginengine.NewApp())
 }
 
-func NewChiWithCustomize() cenery.App {
+func NewChiWithCustomize() cenery.ServerApp {
 	chiApp := chi.NewRouter()
 	chiApp.Use(middleware.Recoverer)
-	return chiengine.New(chiApp)
+	return cenery.NewServer(chiengine.New(chiApp))
 }
 
-func NewChiApp() cenery.App {
-	return chiengine.NewApp()
+func NewChiApp() cenery.ServerApp {
+	return cenery.NewServer(chiengine.NewApp())
 }
 
-func NewFastHTTPWithCustomize() cenery.App {
+func NewFastHTTPWithCustomize() cenery.ServerApp {
 	routerApp := router.New()
-	return fasthttpengine.New(routerApp)
+	return cenery.NewServer(fasthttpengine.New(routerApp))
 }
 
-func NewFastHTTPApp() cenery.App {
-	return fasthttpengine.NewApp()
+func NewFastHTTPApp() cenery.ServerApp {
+	return cenery.NewServer(fasthttpengine.NewApp())
 }
 
 func main() {
@@ -142,7 +142,7 @@ func main() {
 			return c.SendJSON(400, &ErrorResponse{Message: err.Error()})
 		}
 
-		request.File = c.FormFile("file")
+		request.File, _ = c.FormFileStream("file")
 
 		fmt.Println("handler upload success")
 
@@ -151,7 +151,7 @@ func main() {
 		return c.SendJSON(200, &UploadResponse{Name: request.Name, FileName: request.File.FileName})
 	})
 
-	err := app.Listen(":2000")
+	err := app.Listen(":3003")
 	if err != nil {
 		log.Fatal(err.Error())
 	}

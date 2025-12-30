@@ -8,19 +8,19 @@ import (
 	"github.com/fasthttp/router"
 )
 
-func NewApp() cenery.App {
+func NewServerApp() cenery.ServerApp {
 	routerApp := router.New()
-	return fasthttpengine.New(routerApp)
+	return cenery.NewServer(fasthttpengine.New(routerApp))
 }
 
 func main() {
-	app := NewApp()
+	app := NewServerApp()
 
 	app.Get("/", func(c cenery.Ctx) error {
 		return c.SendString(200, "hello")
 	})
 
-	err := app.Listen(":2000")
+	err := app.Listen(":2005")
 	if err != nil {
 		log.Fatal(err.Error())
 	}

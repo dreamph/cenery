@@ -1,21 +1,38 @@
 package cenery
 
-import "io"
+import (
+	"fmt"
+	"io"
+	"strings"
+)
 
-const LogoANSI = "" +
-	"\x1b[38;5;214m      __\x1b[38;5;202m====\x1b[38;5;214m__\x1b[0m\n" +
-	"\x1b[38;5;214m  ___/  \x1b[38;5;202m====\x1b[38;5;214m  \\___\x1b[0m\n" +
-	"\x1b[38;5;214m /  _   \x1b[38;5;202m====\x1b[38;5;214m   _  \\ \x1b[0m\n" +
-	"\x1b[38;5;214m|  ( )  \x1b[38;5;202m====\x1b[38;5;214m  ( )  |\x1b[0m\n" +
-	"\x1b[38;5;214m|   _   \x1b[38;5;202m====\x1b[38;5;214m   _   |\x1b[0m\n" +
-	"\x1b[38;5;214m \\__\x1b[38;5;202mFIRE\x1b[38;5;214m__\x1b[38;5;202mSTART\x1b[38;5;214m__/ \x1b[0m\n" +
-	"\x1b[38;5;45m     C E N E R Y\x1b[0m\n"
-
-// PrintLogo writes the ANSI-colored cenery logo to w.
-func PrintLogo(w io.Writer) error {
+// PrintLogo writes the cenery logo and runtime info to w.
+func PrintLogo(w io.Writer, engineName string, addr string) error {
 	if w == nil {
 		return nil
 	}
-	_, err := io.WriteString(w, LogoANSI)
+	if engineName == "" {
+		engineName = "Unknown"
+	}
+
+	if strings.HasPrefix(addr, ":") {
+		addr = "0.0.0.0" + addr
+	}
+	const (
+		colorOrange = "\x1b[38;5;214m"
+		colorRed    = "\x1b[38;5;202m"
+		colorCyan   = "\x1b[38;5;45m"
+		colorReset  = "\x1b[0m"
+	)
+	_, err := fmt.Fprintf(w, ""+
+		colorOrange+"      __"+colorRed+"===="+colorOrange+"__"+colorReset+"\n"+
+		colorOrange+"  ___/  "+colorRed+"===="+colorOrange+"  \\___"+colorReset+"\n"+
+		colorOrange+" /  _   "+colorRed+"===="+colorOrange+"   _  \\ "+colorReset+"\n"+
+		colorOrange+"|  ( )  "+colorRed+"===="+colorOrange+"  ( )  |"+colorReset+"\n"+
+		colorOrange+"|   _   "+colorRed+"===="+colorOrange+"   _   |"+colorReset+"\n"+
+		colorOrange+" \\__"+colorRed+"FIRE"+colorOrange+"__"+colorRed+"START"+colorOrange+"__/ "+colorReset+"\n"+
+		colorCyan+"     C E N E R Y"+colorReset+"\n"+
+		colorOrange+"Engine"+colorReset+" : %s\n"+
+		colorOrange+"Port"+colorReset+" : %s\n", engineName, addr)
 	return err
 }

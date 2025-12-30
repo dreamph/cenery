@@ -2,7 +2,6 @@ package fiber
 
 import (
 	"context"
-	"os"
 
 	"github.com/dreamph/cenery"
 	"github.com/gofiber/fiber/v2"
@@ -16,8 +15,11 @@ func New(server *fiber.App) cenery.App {
 	return &app{server: server}
 }
 
+func (a *app) Name() string {
+	return "Fiber"
+}
+
 func (a *app) Listen(addr string) error {
-	_ = cenery.PrintLogo(os.Stdout)
 	return a.server.Listen(addr)
 }
 

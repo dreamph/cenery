@@ -27,7 +27,7 @@ import (
 )
 
 func main() {
-	app := echoengine.NewApp()
+	app := cenery.NewServer(echoengine.NewApp())
 
 	app.Get("/", func(c cenery.Ctx) error {
 		return c.SendString(200, "hello")
@@ -42,19 +42,19 @@ func main() {
 ## Switch engines like a pro
 ```go
 // Echo
-app := echoengine.NewApp()
+app := cenery.NewServer(echoengine.NewApp())
 
 // Fiber
-app := fiberengine.NewApp()
+app := cenery.NewServer(fiberengine.NewApp())
 
 // Gin
-app := ginengine.NewApp()
+app := cenery.NewServer(ginengine.NewApp())
 
 // Chi
-app := chiengine.NewApp()
+app := cenery.NewServer(chiengine.NewApp())
 
 // fasthttp
-app := fasthttpengine.NewApp()
+app := cenery.NewServer(fasthttpengine.NewApp())
 ```
 
 ## Custom setup (when you need to tune)
@@ -62,7 +62,7 @@ app := fasthttpengine.NewApp()
 // Echo
 echoApp := echo.New()
 echoApp.Use(echomiddleware.Recover())
-app := echoengine.New(echoApp)
+app := cenery.NewServer(echoengine.New(echoApp))
 
 // Fiber
 fiberApp := fiber.New(fiber.Config{
@@ -70,21 +70,21 @@ fiberApp := fiber.New(fiber.Config{
 	JSONEncoder: gojson.Marshal,
 })
 fiberApp.Use(fiberrecover.New())
-app := fiberengine.New(fiberApp)
+app := cenery.NewServer(fiberengine.New(fiberApp))
 
 // Gin
 ginApp := gin.New()
 ginApp.Use(gin.Recovery())
-app := ginengine.New(ginApp)
+app := cenery.NewServer(ginengine.New(ginApp))
 
 // Chi
 chiApp := chi.NewRouter()
 chiApp.Use(middleware.Recoverer)
-app := chiengine.New(chiApp)
+app := cenery.NewServer(chiengine.New(chiApp))
 
 // fasthttp
 routerApp := router.New()
-app := fasthttpengine.New(routerApp)
+app := cenery.NewServer(fasthttpengine.New(routerApp))
 ```
 
 ## Helpers you will use a lot

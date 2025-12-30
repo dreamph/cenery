@@ -10,23 +10,23 @@ import (
 	fiberrecover "github.com/gofiber/fiber/v2/middleware/recover"
 )
 
-func NewApp() cenery.App {
+func NewServerApp() cenery.ServerApp {
 	fiberApp := fiber.New(fiber.Config{
 		JSONDecoder: gojson.Unmarshal,
 		JSONEncoder: gojson.Marshal,
 	})
 	fiberApp.Use(fiberrecover.New())
-	return fiberengine.New(fiberApp)
+	return cenery.NewServer(fiberengine.New(fiberApp))
 }
 
 func main() {
-	app := NewApp()
+	app := NewServerApp()
 
 	app.Get("/", func(c cenery.Ctx) error {
 		return c.SendString(200, "hello")
 	})
 
-	err := app.Listen(":2000")
+	err := app.Listen(":2001")
 	if err != nil {
 		log.Fatal(err.Error())
 	}

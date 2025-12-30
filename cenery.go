@@ -76,6 +76,7 @@ type App interface {
 	Connect(path string, handlers ...Handler)
 	Patch(path string, handlers ...Handler)
 	Trace(path string, handlers ...Handler)
+	Name() string
 	Use(handlers ...Handler)
 	Listen(addr string) error
 	Shutdown(ctx context.Context) error
