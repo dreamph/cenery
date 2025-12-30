@@ -106,6 +106,22 @@ app.Get("/stream", func(c cenery.Ctx) error {
 })
 ```
 
+## Middleware example
+```go
+app.Use(func(c cenery.Ctx) error {
+	start := time.Now()
+	err := c.Next()
+	elapsed := time.Since(start)
+	log.Printf("method=%s path=%s status=%d in=%s",
+		c.Request().GetHeader("Method"),
+		c.Request().GetHeader("Path"),
+		c.Response().GetHeader("Status"),
+		elapsed,
+	)
+	return err
+})
+```
+
 ## Examples
 Try these:
 - `test/main.go`
