@@ -106,6 +106,15 @@ app.Get("/stream", func(c cenery.Ctx) error {
 })
 ```
 
+## Route params
+cenery accepts `:id` style and maps it for engines like Chi/fasthttp.
+```go
+app.Get("/users/:id", func(c cenery.Ctx) error {
+	id := c.Params("id")
+	return c.SendString(200, "id="+id)
+})
+```
+
 ## Middleware example
 ```go
 app.Use(func(c cenery.Ctx) error {
