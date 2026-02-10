@@ -3,7 +3,7 @@
 Switch engines. Keep your handlers. Ship fast.
 
 cenery wraps popular Go web frameworks behind one clean API, so you can move
-between Echo, Fiber, Gin, Chi, and fasthttp without rewriting your app.
+between Echo, Fiber (v2/v3), Gin, Chi, and fasthttp without rewriting your app.
 
 ## What you get
 - One handler interface across engines
@@ -40,12 +40,19 @@ func main() {
 ```
 
 ## Switch engines like a pro
+Import paths:
+- Fiber v2: `github.com/dreamph/cenery/fiber`
+- Fiber v3: `github.com/dreamph/cenery/fiber3`
+
 ```go
 // Echo
 app := cenery.NewServer(echoengine.NewApp())
 
 // Fiber
 app := cenery.NewServer(fiberengine.NewApp())
+
+// Fiber v3
+app := cenery.NewServer(fiber3engine.NewApp())
 
 // Gin
 app := cenery.NewServer(ginengine.NewApp())
@@ -71,6 +78,14 @@ fiberApp := fiber.New(fiber.Config{
 })
 fiberApp.Use(fiberrecover.New())
 app := cenery.NewServer(fiberengine.New(fiberApp))
+
+// Fiber v3
+fiber3App := fiber3.New(fiber3.Config{
+	JSONDecoder: gojson.Unmarshal,
+	JSONEncoder: gojson.Marshal,
+})
+fiber3App.Use(fiber3recover.New())
+app := cenery.NewServer(fiber3engine.New(fiber3App))
 
 // Gin
 ginApp := gin.New()
@@ -136,6 +151,7 @@ Try these:
 - `test/main.go`
 - `test/cenery/echo/main.go`
 - `test/cenery/fiber/main.go`
+- `test/cenery/fiber3/main.go`
 - `test/cenery/gin/main.go`
 - `test/cenery/chi/main.go`
 - `test/cenery/fasthttp/main.go`

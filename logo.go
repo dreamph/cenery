@@ -24,7 +24,7 @@ func PrintLogo(w io.Writer, engineName string, addr string) error {
 		colorCyan   = "\x1b[38;5;45m"
 		colorReset  = "\x1b[0m"
 	)
-	_, err := fmt.Fprintf(w, ""+
+	_, err := fmt.Fprintf(w, "\n"+
 		colorOrange+"      __"+colorRed+"===="+colorOrange+"__"+colorReset+"\n"+
 		colorOrange+"  ___/  "+colorRed+"===="+colorOrange+"  \\___"+colorReset+"\n"+
 		colorOrange+" /  _   "+colorRed+"===="+colorOrange+"   _  \\ "+colorReset+"\n"+
@@ -33,6 +33,8 @@ func PrintLogo(w io.Writer, engineName string, addr string) error {
 		colorOrange+" \\__"+colorRed+"FIRE"+colorOrange+"__"+colorRed+"START"+colorOrange+"__/ "+colorReset+"\n"+
 		colorCyan+"     C E N E R Y"+colorReset+"\n"+
 		colorOrange+"Engine"+colorReset+" : %s\n"+
-		colorOrange+"Port"+colorReset+" : %s\n", engineName, addr)
+		colorOrange+"Port"+colorReset+" : %s\n", engineName, addr+"\n"+
+		"-------------------------",
+	)
 	return err
 }
