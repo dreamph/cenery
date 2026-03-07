@@ -23,7 +23,7 @@ import (
 	"log"
 
 	"github.com/dreamph/cenery"
-	echoengine "github.com/dreamph/cenery/echo"
+	echoengine "github.com/dreamph/cenery/engine/echo"
 )
 
 func main() {
@@ -41,8 +41,8 @@ func main() {
 
 ## Switch engines like a pro
 Import paths:
-- Fiber v2: `github.com/dreamph/cenery/fiber`
-- Fiber v3: `github.com/dreamph/cenery/fiber3`
+- Fiber v2: `github.com/dreamph/cenery/engine/fiber`
+- Fiber v3: `github.com/dreamph/cenery/engine/fiber3`
 
 ```go
 // Echo

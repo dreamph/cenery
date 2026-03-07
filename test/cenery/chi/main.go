@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/dreamph/cenery"
-	chiengine "github.com/dreamph/cenery/chi"
+	chiengine "github.com/dreamph/cenery/engine/chi"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )

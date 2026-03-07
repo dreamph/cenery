@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/dreamph/cenery"
-	fasthttpengine "github.com/dreamph/cenery/fasthttp"
+	fasthttpengine "github.com/dreamph/cenery/engine/fasthttp"
 	"github.com/fasthttp/router"
 )
 

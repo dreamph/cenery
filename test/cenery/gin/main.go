@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/dreamph/cenery"
-	ginengine "github.com/dreamph/cenery/gin"
+	ginengine "github.com/dreamph/cenery/engine/gin"
 	"github.com/gin-gonic/gin"
 )
 

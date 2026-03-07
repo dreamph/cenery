@@ -4,22 +4,22 @@ go 1.25.0
 
 replace (
 	github.com/dreamph/cenery => ../
-	github.com/dreamph/cenery/chi => ../engine/chi
-	github.com/dreamph/cenery/echo => ../engine/echo
-	github.com/dreamph/cenery/fasthttp => ../engine/fasthttp
-	github.com/dreamph/cenery/fiber => ../engine/fiber
-	github.com/dreamph/cenery/fiber3 => ../engine/fiber3
-	github.com/dreamph/cenery/gin => ../engine/gin
+	github.com/dreamph/cenery/engine/chi => ../engine/chi
+	github.com/dreamph/cenery/engine/echo => ../engine/echo
+	github.com/dreamph/cenery/engine/fasthttp => ../engine/fasthttp
+	github.com/dreamph/cenery/engine/fiber => ../engine/fiber
+	github.com/dreamph/cenery/engine/fiber3 => ../engine/fiber3
+	github.com/dreamph/cenery/engine/gin => ../engine/gin
 )
 
 require (
 	github.com/dreamph/cenery v1.0.1
-	github.com/dreamph/cenery/chi v0.0.0
-	github.com/dreamph/cenery/echo v0.0.0
-	github.com/dreamph/cenery/fasthttp v0.0.0
-	github.com/dreamph/cenery/fiber v0.0.0
-	github.com/dreamph/cenery/fiber3 v0.0.0
-	github.com/dreamph/cenery/gin v0.0.0
+	github.com/dreamph/cenery/engine/chi v0.0.0
+	github.com/dreamph/cenery/engine/echo v0.0.0
+	github.com/dreamph/cenery/engine/fasthttp v0.0.0
+	github.com/dreamph/cenery/engine/fiber v0.0.0
+	github.com/dreamph/cenery/engine/fiber3 v0.0.0
+	github.com/dreamph/cenery/engine/gin v0.0.0
 	github.com/fasthttp/router v1.5.4
 	github.com/gin-gonic/gin v1.11.0
 	github.com/go-chi/chi/v5 v5.2.3

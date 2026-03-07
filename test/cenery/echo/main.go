@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	echoengine "github.com/dreamph/cenery/echo"
+	echoengine "github.com/dreamph/cenery/engine/echo"
 	"github.com/labstack/echo/v4"
 	echomiddleware "github.com/labstack/echo/v4/middleware"
 
